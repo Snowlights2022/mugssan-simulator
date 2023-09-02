@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>音乐裁剪问卷</title>
+    <style>
+        /* 添加样式以适应手机屏幕 */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input[type="text"], input[type="number"], input[type="email"], input[type="tel"], input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        #musicUpload {
+            display: none;
+        }
+        #audioPlayer {
+            width: 100%;
+        }
+        #trimStart {
+            width: 100%;
+        }
+        #trimStartRange {
+            width: 100%;
+        }
+        #trimEnd {
+            width: 100%;
+        }
+        #trimEndRange {
+            width: 100%;
+        }
+        #difficultySlider {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>音乐裁剪问卷</h1>
+        <form id="musicForm">
+            <label for="name">姓名：</label>
+            <input type="text" id="name" required>
+
+            <label for="phone">手机号：</label>
+            <input type="tel" id="phone" required>
+
+            <!-- 添加邮箱地址输入框和备注 -->
+            <label for="email">用于接收谱面。如果没有邮箱，可输入QQ账号+@qq.com格式：</label>
+            <input type="email" id="email" placeholder="请输入邮箱地址或QQ账号" required>
+            
+            <!-- 添加歌曲名称输入框 -->
+            <label for="songName">定制歌曲名称：</label>
+            <input type="text" id="songName">
+
+            <!-- 添加上传图片输入框 -->
+            <label for="imageUpload">上传曲绘（横屏背景图）：</label>
+            <input type="file" id="imageUpload" accept="image/*">
+
+            <p style="font-size: 12px; color: #999;">*注意：横屏背景图。</p>
+
+            <!-- 添加其他谱面需求输入框和备注 -->
+            <label for="otherRequirements">其他谱面需求：</label>
+            <input type="text" id="otherRequirements">
+            <p style="font-size: 12px; color: #999;">*注意：可能会加价。</p>
+
+            <label for="difficulty">歌曲难度：</label>
+            <input type="range" id="difficultySlider" min="1" max="16" step="1" value="1">
+            <div id="difficultyValue">难度: 1</div>
+
+            <label for="musicUpload" class="upload-button"><u>上传音乐</u></label>
+            <input type="file" id="musicUpload" accept=".mp3, .wav, .ogg" required style="display: none;">
+
+            <!-- 添加显示裁剪时间段的元素 -->
+            <div id="clipDuration"></div>
+            
+            <audio id="audioPlayer" controls></audio>
+
+            <label for="trimStart">裁剪起始时间：</label>
+            <input type="text" id="trimStart" readonly>
+
+            <input type="range" id="trimStartRange" min="0" step="0.01" value="0">
+
+            <label for="trimEnd">裁剪结束时间：</label>
+            <input type="text" id="trimEnd" readonly>
+
+            <input type="range" id="trimEndRange" min="0" step="0.01" value="0">
+
+            <label for="price">价格：</label>
+            <input type="text" id="price" readonly>
+
+            <button type="submit">提交</button>
+        </form>
+    </div>
+
+    <script>
+        const musicUpload = document.getElementById('musicUpload');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const trimStart = document.getElementById('trimStart');
+        const trimStartRange = document.getElementById('trimStartRange');
+        const trimEnd = document.getElementById('trimEnd');
+        const trimEndRange = document.getElementById('trimEndRange');
+        const price = document.getElementById('price');
+        const musicForm = document.getElementById('musicForm');
+        const difficultySlider = document.getElementById('difficultySlider');
+        const difficultyValue = document.getElementById('difficultyValue');
+        const clipDuration = document.getElementById('clipDuration');
+
+        // 格式化时间为分秒格式
+        function formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = (timeInSeconds % 60).toFixed(2);
+            return `${minutes}:${seconds}`;
+        }
+
+        // 更新难度值显示
+        difficultySlider.addEventListener('input', function() {
+            difficultyValue.textContent = `难度: ${this.value}`;
+        });
+
+        musicUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                audioPlayer.src = URL.createObjectURL(file);
+                audioPlayer.load();
+                audioPlayer.addEventListener('loadedmetadata', function() {
+                    const duration = this.duration;
+                    trimStartRange.max = duration;
+                    trimEndRange.max = duration;
+                });
+            }
+        });
+
+        audioPlayer.addEventListener('timeupdate', function() {
+            // 获取难度和当前播放时间
+            const difficulty = difficultySlider.value;
+            const currentTime = this.currentTime;
+            
+            // 计算裁剪时长（秒）
+            const trimStartInSeconds = parseFloat(trimStartRange.value);
+            const trimEndInSeconds = parseFloat(trimEndRange.value);
+            const clipDurationInSeconds = trimEndInSeconds - trimStartInSeconds;
+            
+            // 计算价格（每秒一块）
+            const pricePerSecond = 1.0; // 每秒价格
+            const calculatedPrice = (difficulty * 1.65 + clipDurationInSeconds * pricePerSecond).toFixed(2);
+            price.value = calculatedPrice;
+        });
+
+        musicForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            // 在这里提交问卷数据，可以使用Ajax或其他方式将数据发送到服务器
+            alert('问卷已提交！');
+        });
+
+        // 监听裁剪开始时间的输入
+        trimStart.addEventListener('input', function() {
+            // 确保起始时间不大于结束时间
+            if (parseFloat(this.value) > parseFloat(trimEnd.value)) {
+                this.value = trimEnd.value;
+            }
+            audioPlayer.currentTime = parseFloat(trimStartRange.value);
+
+            // 计算并显示时间段时长
+            const clipDurationInSeconds = parseFloat(trimEndRange.value) - parseFloat(trimStartRange.value);
+            clipDuration.textContent = `裁剪时长: ${formatTime(clipDurationInSeconds)} 分钟`;
+        });
+
+        // 监听裁剪结束时间的输入（拖动进度条）
+        trimEndRange.addEventListener('input', function() {
+            // 确保结束时间不小于起始时间
+            if (parseFloat(this.value) < parseFloat(trimStartRange.value)) {
+                this.value = trimStartRange.value;
+            }
+            trimEnd.value = formatTime(parseFloat(trimEndRange.value));
+
+            // 计算并显示时间段时长
+            const clipDurationInSeconds = parseFloat(trimEndRange.value) - parseFloat(trimStartRange.value);
+            clipDuration.textContent = `裁剪时长: ${formatTime(clipDurationInSeconds)} 分钟`;
+        });
+
+        // 监听裁剪结束时间的输入（拖动进度条）
+        trimEnd.addEventListener('input', function() {
+            // 确保结束时间不小于起始时间
+            if (parseFloat(this.value) < parseFloat(trimStart.value)) {
+                this.value = trimStart.value;
+            }
+        });
+
+        // 监听裁剪开始时间的输入（拖动进度条）
+        trimStartRange.addEventListener('input', function() {
+            // 确保起始时间不大于结束时间
+            if (parseFloat(this.value) > parseFloat(trimEndRange.value)) {
+                this.value = trimEndRange.value;
+            }
+            trimStart.value = formatTime(parseFloat(trimStartRange.value));
+            audioPlayer.currentTime = parseFloat(trimStartRange.value);
+
+            // 计算并显示时间段时长
+            const clipDurationInSeconds = parseFloat(trimEndRange.value) - parseFloat(trimStartRange.value);
+            clipDuration.textContent = `裁剪时长: ${formatTime(clipDurationInSeconds)} 分钟`;
+        });
+    </script>
+</body>
+</html>
