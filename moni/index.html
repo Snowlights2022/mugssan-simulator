@@ -1,0 +1,48 @@
+﻿<!doctype html>
+<html>
+<head>
+    <title>音游社</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <style>
+        body {
+            font-size: 12px; /* 更小的字体 */
+        }
+
+        .input-container {
+            text-align: center;
+            padding-top: 100px;
+        }
+
+        .password-input {
+            margin-bottom: 10px;
+        }
+
+        .password-hint {
+            font-size: 10px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+    <div class="input-container">
+        <h1>音游社谱面模拟器（内测中）</h1>
+        <div class="password-hint">
+            此为<a href="https://github.com/MisaLiu/phi-chart-render" target="_blank">phi-chart-render</a>开源项目，请遵守社区规章制度。
+        </div>
+        <input type="text" id="password" class="password-input" placeholder="请输入:“我已知晓”">
+        <button onclick="checkPassword()">确认</button>
+    </div>
+    <script>
+        function checkPassword() {
+            var passwordInput = document.getElementById("password").value.trim();
+            var correctPassword = "我已知晓"; // 设置正确的密码
+            if (passwordInput === correctPassword) {
+                window.location.href = "upload"; // 密码正确，跳转到上传谱面页面
+            } else {
+                alert("验证失败，请重新输入。"); // 密码错误，弹出错误提示
+            }
+        }
+    </script>
+</body>
+</html>
