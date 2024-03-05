@@ -209,22 +209,14 @@
             每张谱面对应每台设备的延迟是不一样的<br>
             Tips：可通过判断前几个音是否采准来判断需要调节的延迟参数<br>
           <hr/>
+          <label>音乐: <select id="file-music"></select></label><br>
           <label>谱面: <select id="file-chart"></select></label>
           <label>谱面延迟: <input type="number" id="settings-audio-offset" placeholder="0" style="width:4em" />ms</label><br>
           <label>曲绘: <select id="file-bg"></select></label>
-           <label>
-                曲绘画质:
-                <select id="settings-bg-quality">
-                    <option value="0">低(480P)</option>
-                    <option value="1" default selected="selected">中(720P)</option>
-                    <option value="2">高(1080P)</option>
-                    <option value="3">原画质</option>
-                </select>
-            </label><br>
-            <label>曲绘昏暗度: <input type="range" id="settings-bg-dim" min="0" max="1" step="0.01" value="0.5"></label><br>
-            <label>曲绘透明度: <input type="range" id="settings-bg-blur" min="0" max="100" value="50" /></label><br>
-          <label>音乐: <select id="file-music"></select></label><br>
-          <label>音乐速度: <input type="range" id="settings-audio-speed" min="0.25" max="1.75" step="0.25" value="1"></label><br>
+          <label><input type="checkbox" id="settings-autoplay" />自动游玩</label><br>
+          <label><input type="checkbox" id="settings-multi-note-hl" checked="checked" />多押提示</label><br>
+          <label><input type="checkbox" id="settings-show-bg" checked="checked"/>显示曲绘</label><br>
+          <label><input type="checkbox" id="settings-low-resolution" />低分辨率</label><br> 
           <hr />
         </div>
         <div id="tab-visual">
@@ -236,10 +228,18 @@
           <div class="loading" id="loading-skin-pack">No skinpack selected.</div>
           <label>按键大小调节: <input type="range" id="settings-note-scale" min="0" max="4000" value="2000"></label><br>
           <hr/>
-          <label><input type="checkbox" id="settings-autoplay" />自动游玩</label><br>
-          <label><input type="checkbox" id="settings-multi-note-hl" checked="checked" />多押提示</label><br>
-          <label><input type="checkbox" id="settings-show-bg" checked="checked"/>显示曲绘</label><br>
-          <label><input type="checkbox" id="settings-low-resolution" />低分辨率</label><br>
+          <label>
+                曲绘画质:
+                <select id="settings-bg-quality">
+                    <option value="0">低(480P)</option>
+                    <option value="1" default selected="selected">中(720P)</option>
+                    <option value="2">高(1080P)</option>
+                    <option value="3">原画质</option>
+                </select>
+            </label><br>
+          <label>曲绘昏暗度: <input type="range" id="settings-bg-dim" min="0" max="1" step="0.01" value="0.5"></label><br>
+          <label>曲绘透明度: <input type="range" id="settings-bg-blur" min="0" max="100" value="50" /></label><br>
+          <label>音乐速度: <input type="range" id="settings-audio-speed" min="0.25" max="1.75" step="0.25" value="1"></label><br>
           <hr/>
         </div>
         <div id="tab-sound">
